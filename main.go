@@ -13,16 +13,20 @@ import (
 
 	"github.com/icydoge/wylis/config"
 	"github.com/icydoge/wylis/incoming"
+	"github.com/icydoge/wylis/metrics"
 )
 
 func main() {
 	initContext := context.Background()
 	svc := incoming.Service()
-	srv, err := typhon.Listen(svc, fmt.Sprintf("%s:%s", config.ListenAddr, config.ConfigIncomingListenPort))
+	srv, err := typhon.Listen(svc, fmt.Sprintf("%s:%s", config.ConfigListenAddr, config.ConfigIncomingListenPort))
 	if err != nil {
 		panic(err)
 	}
 	slog.Info(initContext, "Wylis incoming listening on %v", srv.Listener().Addr())
+
+	metrics.Init()
+	slog.Info(initContext, "Wylis metrics listening on %s", fmt.Sprintf("%s:%s", config.ConfigListenAddr, config.ConfigMetricsListenPort))
 
 	done := make(chan os.Signal, 1)
 	signal.Notify(done, syscall.SIGINT, syscall.SIGTERM)
