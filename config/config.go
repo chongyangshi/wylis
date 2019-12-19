@@ -15,8 +15,8 @@ var (
 	ConfigIncomingListenPort = getConfigFromOSEnv("INCOMING_LISTEN_PORT", "9050", true)
 	ConfigMetricsListenPort  = getConfigFromOSEnv("METRICS_LISTEN_PORT", "9051", true)
 	ConfigKubeAPIServerAddr  = getConfigFromOSEnv("KUBE_APISERVER_ADDR", "127.0.0.1:6443", true)
-	ConfigOutgoingTimeout    = getConfigFromOSEnv("OUTGOING_TIMEOUT", "5", true)
-	ConfigOutgoingInterval   = getConfigFromOSEnv("OUTGOING_TIMEOUT", "10", true)
+	ConfigOutgoingTimeout    = getConfigFromOSEnv("OUTGOING_TIMEOUT", "5s", true)
+	ConfigOutgoingInterval   = getConfigFromOSEnv("OUTGOING_INTERVAL", "10s", true)
 )
 
 // This is intended to run inside Kubernetes as a pod of a daemonset, so we just set service Configurations from

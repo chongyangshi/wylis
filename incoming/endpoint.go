@@ -18,6 +18,6 @@ func serveIncoming(req typhon.Request) typhon.Response {
 	sourceNodeIP := req.Header.Get(config.SourceNodeIPHeader)
 	metrics.RegisterIncomingRequest(sourceNodeIP)
 
-	// Return a plain 200 success response.
+	// Returns a plain 200 success response.
 	return req.Response(incomingResponse{})
 }
