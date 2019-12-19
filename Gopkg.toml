@@ -5,3 +5,7 @@
 [[constraint]]
   name = "github.com/monzo/typhon"
   branch = "master"
+
+[[constraint]]
+  name = "k8s.io/client-go"
+  branch = "kubernetes-1.15.0"
