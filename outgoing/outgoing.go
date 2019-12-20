@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/monzo/slog"
@@ -14,12 +15,21 @@ import (
 	"github.com/icydoge/wylis/metrics"
 )
 
+var targetPort int
+
 func initOutgoing(ctx context.Context) error {
 	interval, err := time.ParseDuration(config.ConfigOutgoingInterval)
 	if err != nil {
 		slog.Error(ctx, "Failed to parse neighbour outgoing interval %s: %v", config.ConfigOutgoingInterval, err)
 		return err
 	}
+
+	targetPortParsed, err := strconv.ParseInt(config.ConfigIncomingListenPort, 10, 32)
+	if err != nil {
+		slog.Error(ctx, "Failed to parse target port %s: %v", config.ConfigIncomingListenPort, err)
+		return err
+	}
+	targetPort = int(targetPortParsed)
 
 	outgoingTicker := time.NewTicker(interval)
 	outgoingQuit := make(chan struct{})
@@ -50,7 +60,7 @@ func initOutgoing(ctx context.Context) error {
 }
 
 func sendOutgoing(ctx context.Context, target neighbourPod) error {
-	req := typhon.NewRequest(ctx, http.MethodGet, fmt.Sprintf("http://%s:%s/incoming", target.podIP, config.ConfigIncomingListenPort), nil)
+	req := typhon.NewRequest(ctx, http.MethodGet, fmt.Sprintf("http://%s:%d/incoming", target.podIP, targetPort), nil)
 	if req.Err() != nil {
 		// If for any reason we fail to construct a valid HTTP request, return error
 		return req.Err()
