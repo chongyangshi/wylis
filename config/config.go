@@ -19,7 +19,7 @@ var (
 	ConfigMetricsListenPort  = getConfigFromOSEnv("METRICS_LISTEN_PORT", "9051", true)
 	ConfigOutgoingTimeout    = getConfigFromOSEnv("OUTGOING_TIMEOUT", "5s", true)
 	ConfigOutgoingInterval   = getConfigFromOSEnv("OUTGOING_INTERVAL", "10s", true)
-	ConfigRefreshInterval    = getConfigFromOSEnv("REFRESH_INTERVAL", "10s", true)
+	ConfigRefreshInterval    = getConfigFromOSEnv("REFRESH_INTERVAL", "30s", true)
 )
 
 // This is intended to run inside Kubernetes as a pod of a daemonset, so we just set service Configurations from
