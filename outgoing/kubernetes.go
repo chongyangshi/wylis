@@ -87,6 +87,7 @@ func refreshNeighbourPods(ctx context.Context) error {
 		return err
 	}
 	if len(pods.Items) == 0 {
+		// We should at least find the requesting pod itself, otherwise label selector probably misconfigured
 		err = terrors.InternalService("", "Could not find any Wylis pod, did you set the identifier label and value correctly?", nil)
 		slog.Error(ctx, "Error: %v", err)
 		return err

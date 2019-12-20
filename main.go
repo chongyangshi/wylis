@@ -20,12 +20,6 @@ import (
 func main() {
 	initContext := context.Background()
 
-	// Initialise client for outgoing requests
-	err := outgoing.Init(initContext)
-	if err != nil {
-		panic(err)
-	}
-
 	// Initialise server for incoming requests
 	svc := incoming.Service()
 	srv, err := typhon.Listen(svc, fmt.Sprintf("%s:%s", config.ConfigListenAddr, config.ConfigIncomingListenPort))
@@ -37,6 +31,12 @@ func main() {
 	// Initialise metcirs server
 	metrics.Init()
 	slog.Info(initContext, "Wylis metrics listening on %s", fmt.Sprintf("%s:%s", config.ConfigListenAddr, config.ConfigMetricsListenPort))
+
+	// Initialise client for outgoing requests
+	err = outgoing.Init(initContext)
+	if err != nil {
+		panic(err)
+	}
 
 	// Log termination gracefully
 	done := make(chan os.Signal, 1)
