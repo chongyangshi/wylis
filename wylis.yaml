@@ -23,7 +23,7 @@ spec:
             fieldRef:
               apiVersion: v1
               fieldPath: status.hostIP
-        image: 172.16.16.2:2443/go:wylis-118e66d
+        image: 172.16.16.2:2443/go:wylis-486f381
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 9050
@@ -47,7 +47,6 @@ spec:
         terminationMessagePath: /dev/termination-log
         terminationMessagePolicy: File
       dnsPolicy: ClusterFirst
-      hostNetwork: true
       restartPolicy: Always
       schedulerName: default-scheduler
       securityContext: {}
