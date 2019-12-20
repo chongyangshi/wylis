@@ -14,7 +14,7 @@ import (
 
 var outgoingInterval time.Duration
 
-func Init(ctx context.Context) error {
+func initTyphonClient(ctx context.Context) error {
 	var err error
 	outgoingInterval, err = time.ParseDuration(config.ConfigOutgoingInterval)
 	if err != nil {

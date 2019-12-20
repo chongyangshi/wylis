@@ -10,13 +10,16 @@ import (
 const SourceNodeIPHeader = "X-WYLIS-SOURCE-NODE-IP"
 
 var (
+	ConfigNamespace          = getConfigFromOSEnv("NAMESPACE", "default", true)
+	ConfigIdentifierLabel    = getConfigFromOSEnv("IDENTIFIER_LABEL", "app", true)
+	ConfigIdentifierValue    = getConfigFromOSEnv("IDENTIFIER_VALUE", "wylis", true)
 	ConfigNodeIP             = getConfigFromOSEnv("NODE_IP", "127.0.0.1", true)
 	ConfigListenAddr         = getConfigFromOSEnv("LISTEN_ADDR", "", true)
 	ConfigIncomingListenPort = getConfigFromOSEnv("INCOMING_LISTEN_PORT", "9050", true)
 	ConfigMetricsListenPort  = getConfigFromOSEnv("METRICS_LISTEN_PORT", "9051", true)
-	ConfigKubeAPIServerAddr  = getConfigFromOSEnv("KUBE_APISERVER_ADDR", "127.0.0.1:6443", true)
 	ConfigOutgoingTimeout    = getConfigFromOSEnv("OUTGOING_TIMEOUT", "5s", true)
 	ConfigOutgoingInterval   = getConfigFromOSEnv("OUTGOING_INTERVAL", "10s", true)
+	ConfigRefreshInterval    = getConfigFromOSEnv("REFRESH_INTERVAL", "10s", true)
 )
 
 // This is intended to run inside Kubernetes as a pod of a daemonset, so we just set service Configurations from
