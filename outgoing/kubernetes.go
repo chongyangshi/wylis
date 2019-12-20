@@ -8,12 +8,18 @@ import (
 
 	"github.com/monzo/slog"
 	"github.com/monzo/terrors"
+	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 
 	wylisconfig "github.com/icydoge/wylis/config"
 )
+
+type neighbourPod struct {
+	podIP  string
+	nodeIP string
+}
 
 // Normally, when calling pods of a Kubernetes service without using a separate
 // service proxy, the client should call the cluster IP for kube-proxy to forward
@@ -23,7 +29,7 @@ import (
 var (
 	clientSet        = &kubernetes.Clientset{}
 	neighbourPodLock = sync.RWMutex{}
-	neighbourPodIPs  = []string{}
+	neighbourPods    = []neighbourPod{}
 )
 
 func initClusterClient(ctx context.Context) error {
@@ -53,7 +59,7 @@ func initClusterClient(ctx context.Context) error {
 		return err
 	}
 
-	slog.Debug(ctx, "Loaded %d Wylis neighbours.", len(neighbourPodIPs))
+	slog.Debug(ctx, "Loaded %d Wylis neighbours.", len(neighbourPods))
 
 	refreshTicker := time.NewTicker(interval)
 	refreshQuit := make(chan struct{})
@@ -93,7 +99,7 @@ func refreshNeighbourPods(ctx context.Context) error {
 		return err
 	}
 
-	neighbours := []string{}
+	neighbours := []neighbourPod{}
 	for _, pod := range pods.Items {
 		if pod.Status.HostIP == wylisconfig.ConfigNodeIP {
 			// Don't send requests to self
@@ -105,16 +111,37 @@ func refreshNeighbourPods(ctx context.Context) error {
 			continue
 		}
 
-		neighbours = append(neighbours, pod.Status.PodIP)
+		podIP := extractPodIP(pod.Status.PodIPs)
+		if podIP != "" {
+			neighbours = append(neighbours, neighbourPod{
+				podIP:  podIP,
+				nodeIP: pod.Status.HostIP,
+			})
+		}
 	}
 
-	neighbourPodIPs = neighbours
+	if len(neighbours) == 0 {
+		slog.Warn(ctx, "%s Found no neighbour pod in refresh, either we are the only node or there's a network segmentation.", wylisconfig.ConfigNodeIP)
+	}
+
+	neighbourPods = neighbours
 	return nil
 }
 
-func getNeighbourPods() []string {
+// Extract the first IP assigned to the pod, we only need to check
+// each pod once, and as long as the cluster CNI is healthy, any pod
+// IP assigned is guaranteed to be routable.
+func extractPodIP(podIPs []corev1.PodIP) string {
+	if len(podIPs) == 0 {
+		return ""
+	}
+
+	return podIPs[0].IP
+}
+
+func getNeighbourPods() []neighbourPod {
 	neighbourPodLock.RLock()
 	defer neighbourPodLock.RUnlock()
 
-	return neighbourPodIPs
+	return neighbourPods
 }

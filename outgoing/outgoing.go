@@ -28,10 +28,10 @@ func initOutgoing(ctx context.Context) error {
 			select {
 			case <-outgoingTicker.C:
 				g, ctx := errgroup.WithContext(ctx)
-				for _, neighbourIP := range getNeighbourPods() {
-					neighbourIP := neighbourIP // Avoids shadowing
+				for _, neighbour := range getNeighbourPods() {
+					neighbour := neighbour // Avoids shadowing
 					g.Go(func() error {
-						err := sendOutgoing(ctx, neighbourIP)
+						err := sendOutgoing(ctx, neighbour)
 						return err
 					})
 				}
@@ -49,21 +49,22 @@ func initOutgoing(ctx context.Context) error {
 	return nil
 }
 
-func sendOutgoing(ctx context.Context, targetIP string) error {
-	req := typhon.NewRequest(ctx, http.MethodGet, fmt.Sprintf("http://%s:%d/incoming", targetIP, config.ConfigIncomingListenPort), nil)
+func sendOutgoing(ctx context.Context, target neighbourPod) error {
+	req := typhon.NewRequest(ctx, http.MethodGet, fmt.Sprintf("http://%s:%d/incoming", target.podIP, config.ConfigIncomingListenPort), nil)
+	req.Header.Set(config.SourceNodeIPHeader, config.ConfigNodeIP)
 
 	requestStart := time.Now()
 	rsp := req.Send().Response()
 	requestDuration := time.Now().Sub(requestStart)
 
 	if rsp.Response == nil || rsp.StatusCode >= 400 {
-		metrics.RegisterOutgoingRequest(targetIP, false)
+		metrics.RegisterOutgoingRequest(target.nodeIP, false)
 		return rsp.Error
 	}
 
 	// We do not time failed requests, as it could have been a timeout error
-	metrics.RegisterOutgoingRequest(targetIP, true)
-	metrics.RegisterOutgoingTiming(targetIP, requestDuration.Seconds())
+	metrics.RegisterOutgoingRequest(target.nodeIP, true)
+	metrics.RegisterOutgoingTiming(target.nodeIP, requestDuration.Seconds())
 
 	return nil
 }

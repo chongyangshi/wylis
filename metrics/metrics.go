@@ -34,14 +34,14 @@ var (
 	}, []string{"source_node", "target_node"})
 )
 
-func RegisterIncomingRequest(sourceIP string) {
-	incomingRequests.WithLabelValues(sourceIP, config.ConfigNodeIP).Inc()
+func RegisterIncomingRequest(sourceNode string) {
+	incomingRequests.WithLabelValues(sourceNode, config.ConfigNodeIP).Inc()
 }
 
-func RegisterOutgoingRequest(targetIP string, success bool) {
-	outgoingRequests.WithLabelValues(config.ConfigNodeIP, targetIP, strconv.FormatBool(success)).Inc()
+func RegisterOutgoingRequest(targetNode string, success bool) {
+	outgoingRequests.WithLabelValues(config.ConfigNodeIP, targetNode, strconv.FormatBool(success)).Inc()
 }
 
-func RegisterOutgoingTiming(targetIP string, timing float64) {
-	outgoingTimings.WithLabelValues(config.ConfigNodeIP, targetIP).Observe(timing)
+func RegisterOutgoingTiming(targetNode string, timing float64) {
+	outgoingTimings.WithLabelValues(config.ConfigNodeIP, targetNode).Observe(timing)
 }
