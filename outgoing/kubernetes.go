@@ -100,6 +100,11 @@ func refreshNeighbourPods(ctx context.Context) error {
 			continue
 		}
 
+		if pod.Status.HostIP == "" {
+			// Neighbour not ready if HostIP info not available
+			continue
+		}
+
 		neighbours = append(neighbours, pod.Status.PodIP)
 	}
 

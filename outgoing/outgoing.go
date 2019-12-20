@@ -50,7 +50,7 @@ func initOutgoing(ctx context.Context) error {
 }
 
 func sendOutgoing(ctx context.Context, targetIP string) error {
-	req := typhon.NewRequest(ctx, http.MethodGet, fmt.Sprintf("http://%s/incoming", targetIP), nil)
+	req := typhon.NewRequest(ctx, http.MethodGet, fmt.Sprintf("http://%s:%d/incoming", targetIP, config.ConfigIncomingListenPort), nil)
 
 	requestStart := time.Now()
 	rsp := req.Send().Response()
