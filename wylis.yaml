@@ -41,10 +41,11 @@ spec:
           requests:
             cpu: 100m
             memory: 100Mi
-          limit:
+          limits:
             cpu: 200m
             memory: 200Mi
-        volumeMounts: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
       dnsPolicy: ClusterFirst
       hostNetwork: true
       restartPolicy: Always
@@ -53,12 +54,9 @@ spec:
       serviceAccount: wylis
       serviceAccountName: wylis
       terminationGracePeriodSeconds: 30
-      terminationMessagePath: /dev/termination-log
-      terminationMessagePolicy: File
       tolerations:
       - effect: NoSchedule
         operator: Exists
-      volumes: {}
   updateStrategy:
     rollingUpdate:
       maxUnavailable: 1

@@ -56,7 +56,7 @@ func sendOutgoing(ctx context.Context, targetIP string) error {
 	rsp := req.Send().Response()
 	requestDuration := time.Now().Sub(requestStart)
 
-	if rsp.StatusCode >= 400 {
+	if rsp.Response == nil || rsp.StatusCode >= 400 {
 		metrics.RegisterOutgoingRequest(targetIP, false)
 		return rsp.Error
 	}
