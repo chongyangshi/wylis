@@ -50,7 +50,12 @@ func initOutgoing(ctx context.Context) error {
 }
 
 func sendOutgoing(ctx context.Context, target neighbourPod) error {
-	req := typhon.NewRequest(ctx, http.MethodGet, fmt.Sprintf("http://%s:%d/incoming", target.podIP, config.ConfigIncomingListenPort), nil)
+	req := typhon.NewRequest(ctx, http.MethodGet, fmt.Sprintf("http://%s:%s/incoming", target.podIP, config.ConfigIncomingListenPort), nil)
+	if req.Err() != nil {
+		// If for any reason we fail to construct a valid HTTP request, return error
+		return req.Err()
+	}
+
 	req.Header.Set(config.SourceNodeIPHeader, config.ConfigNodeIP)
 
 	requestStart := time.Now()
