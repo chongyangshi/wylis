@@ -8,4 +8,4 @@
 
 [[constraint]]
   name = "k8s.io/client-go"
-  branch = "kubernetes-1.15.0"
+  branch = "release-12.0"
