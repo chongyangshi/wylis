@@ -3,6 +3,7 @@ package outgoing
 import (
 	"context"
 	"fmt"
+	"net"
 	"sync"
 	"time"
 
@@ -111,13 +112,16 @@ func refreshNeighbourPods(ctx context.Context) error {
 			continue
 		}
 
-		podIP := extractPodIP(pod.Status.PodIPs)
-		if podIP != "" {
-			neighbours = append(neighbours, neighbourPod{
-				podIP:  podIP,
-				nodeIP: pod.Status.HostIP,
-			})
+		podIP, err := validatePodIP(extractPodIP(pod.Status))
+		if err != nil {
+			slog.Warn(ctx, "Found invalid pod IP: %v", err)
+			continue
 		}
+
+		neighbours = append(neighbours, neighbourPod{
+			podIP:  podIP,
+			nodeIP: pod.Status.HostIP,
+		})
 	}
 
 	if len(neighbours) == 0 {
@@ -131,12 +135,30 @@ func refreshNeighbourPods(ctx context.Context) error {
 // Extract the first IP assigned to the pod, we only need to check
 // each pod once, and as long as the cluster CNI is healthy, any pod
 // IP assigned is guaranteed to be routable.
-func extractPodIP(podIPs []corev1.PodIP) string {
-	if len(podIPs) == 0 {
+func extractPodIP(status corev1.PodStatus) string {
+	if status.PodIP != "" {
+		return status.PodIP
+	}
+
+	if len(status.PodIPs) == 0 {
 		return ""
 	}
 
-	return podIPs[0].IP
+	return status.PodIPs[0].IP
+}
+
+func validatePodIP(podIP string) (string, error) {
+	ip := net.ParseIP(podIP)
+	if ip == nil {
+		return "", terrors.PreconditionFailed("invalid_pod_ip", "Invalid pod IP observed, cannot use.", map[string]string{"raw_ip": podIP})
+	}
+
+	// Because Wylis sends unmodifiable payloads, and discards response, with fixed time-outs,
+	// we'll not attempt to validate whether the destination IP is within a pre-defined range here.
+	// In any valid threat model this is a bad idea, but Wylis processes information from a trusted
+	// apiserver only, in this case.
+
+	return ip.String(), nil
 }
 
 func getNeighbourPods() []neighbourPod {

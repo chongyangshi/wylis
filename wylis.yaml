@@ -23,7 +23,7 @@ spec:
             fieldRef:
               apiVersion: v1
               fieldPath: status.hostIP
-        image: 172.16.16.2:2443/go:wylis-486f381
+        image: 172.16.16.2:2443/go:wylis-2f2a167
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 9050
