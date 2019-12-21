@@ -32,7 +32,7 @@ You can then edit The default [`wylis.yaml`](https://github.com/icydoge/wylis/tr
 
 * Wylis is not suitable for commercial, production use for obvious reasons. It is unlikely under a production-grade budget environment Wylis' use-case is needed.
 * Because every pair of nodes will have periodic traffic in both directions (at a defined interval you can configure), the amount of periodic traffic in the cluster will be [O(n²)](https://en.wikipedia.org/wiki/Big_O_notation) as the number of nodes in your cluster grow. While the blank HTTP RPC requests used by Wylis are very cheap, you should still be wary if you have a really large cluster. This is also the reason I decided not to implement Wylis as a more idiomatic `watch` controller.
-* Even though Wylis should effectively hold the door open, it is still recommend that you deploy a service proxy with built-in retries for time-outs, such as [Envoy](https://www.envoyproxy.io/), to improve the reliability if your tunnelled RPCs through retries.
+* Even though Wylis should effectively hold the door open, it is still recommend that you deploy a service proxy with built-in retries for time-outs, such as [Envoy](https://www.envoyproxy.io/), to improve the reliability of your tunnelled RPCs through retries.
 
 ## Where does the name of the project come from?
 
