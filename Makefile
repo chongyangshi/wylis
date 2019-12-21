@@ -20,7 +20,7 @@ push:
 	docker push ${REPOSITORY}:${SVC}-${COMMIT}
 
 push-public:
-	docker tag ${SVC}:latest ${REPOSITORY}:${SVC}-${COMMIT}
+	docker tag ${SVC}:latest ${PUBLIC_REPOSITIORY}:${SVC}
 	docker push ${PUBLIC_REPOSITIORY}:${SVC}
 
 clean:
