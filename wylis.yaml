@@ -12,6 +12,9 @@ spec:
       app: wylis
   template:
     metadata:
+      annotations:
+        prometheus.io/scrape: 'true'
+        prometheus.io/port: '9051'
       creationTimestamp: null
       labels:
         app: wylis
