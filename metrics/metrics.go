@@ -34,6 +34,14 @@ var (
 	}, []string{"source_node", "target_node"})
 )
 
+var (
+	outgoingStatus = promauto.NewGaugeVec(prometheus.GaugeOpts{
+		Namespace: "wylis",
+		Name:      "outgoing_status",
+		Help:      "Current proportion of successful outgoing requests from this Wylis pod.",
+	}, []string{"source_node"})
+)
+
 func RegisterIncomingRequest(sourceNode string) {
 	incomingRequests.WithLabelValues(sourceNode, config.ConfigNodeIP).Inc()
 }
@@ -44,4 +52,13 @@ func RegisterOutgoingRequest(targetNode string, success bool) {
 
 func RegisterOutgoingTiming(targetNode string, timing float64) {
 	outgoingTimings.WithLabelValues(config.ConfigNodeIP, targetNode).Observe(timing)
+}
+
+func RegisterOutgoingStatus(numSuccess, total int) {
+	if numSuccess > total {
+		numSuccess = total // Invalid input, cap at 1.
+	}
+
+	successRate := float64(numSuccess) / float64(total)
+	outgoingStatus.WithLabelValues(config.ConfigNodeIP).Set(successRate)
 }

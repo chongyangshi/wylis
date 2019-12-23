@@ -9,3 +9,5 @@ require (
 	github.com/prometheus/procfs v0.0.3
 	golang.org/x/sys v0.0.0-20190801041406-cbf593c0f2f3
 )
+
+go 1.13

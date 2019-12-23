@@ -31,23 +31,41 @@ func initOutgoing(ctx context.Context) error {
 	}
 	targetPort = int(targetPortParsed)
 
+	// Main outgoing routine
 	outgoingTicker := time.NewTicker(interval)
 	outgoingQuit := make(chan struct{})
 	go func() {
 		for {
 			select {
 			case <-outgoingTicker.C:
+				// One round of polling of all neighbours
 				g, ctx := errgroup.WithContext(ctx)
-				for _, neighbour := range getNeighbourPods() {
-					neighbour := neighbour // Avoids shadowing
+
+				neighbours := getNeighbourPods()
+				results := make([]bool, len(neighbours)) // Should be memory-safe
+
+				for i, neighbour := range neighbours {
+					i, neighbour := i, neighbour // Avoids shadowing
 					g.Go(func() error {
 						err := sendOutgoing(ctx, neighbour)
+						if err == nil {
+							results[i] = true
+						}
 						return err
 					})
 				}
 				if err := g.Wait(); err != nil {
 					slog.Error(ctx, "Error sending outgoing to at least one neighbour: %v", err)
 				}
+
+				success := 0
+				for _, result := range results {
+					if result == true {
+						success++
+					}
+				}
+
+				metrics.RegisterOutgoingStatus(success, len(results))
 
 			case <-outgoingQuit:
 				outgoingTicker.Stop()
