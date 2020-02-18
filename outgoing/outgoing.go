@@ -33,47 +33,37 @@ func initOutgoing(ctx context.Context) error {
 
 	// Main outgoing routine
 	outgoingTicker := time.NewTicker(interval)
-	outgoingQuit := make(chan struct{})
 	go func() {
-		for {
-			select {
-			case <-outgoingTicker.C:
-				// One round of polling of all neighbours
-				g, ctx := errgroup.WithContext(ctx)
+		for range outgoingTicker.C {
+			g, ctx := errgroup.WithContext(ctx)
 
-				neighbours := getNeighbourPods()
-				results := make([]bool, len(neighbours)) // Should be memory-safe
+			neighbours := getNeighbourPods()
+			results := make([]bool, len(neighbours)) // Should be memory-safe
 
-				for i, neighbour := range neighbours {
-					i, neighbour := i, neighbour // Avoids shadowing
-					g.Go(func() error {
-						err := sendOutgoing(ctx, neighbour)
-						if err == nil {
-							results[i] = true
-						}
-						return err
-					})
-				}
-				if err := g.Wait(); err != nil {
-					slog.Error(ctx, "Error sending outgoing to at least one neighbour: %v", err)
-				}
-
-				success := 0
-				for _, result := range results {
-					if result == true {
-						success++
+			for i, neighbour := range neighbours {
+				neighbour := neighbour // Avoids shadowing
+				g.Go(func() error {
+					err := sendOutgoing(ctx, neighbour)
+					if err == nil {
+						results[i] = true
 					}
-				}
-
-				metrics.RegisterOutgoingStatus(success, len(results))
-
-			case <-outgoingQuit:
-				outgoingTicker.Stop()
-				return
+					return err
+				})
 			}
+			if err := g.Wait(); err != nil {
+				slog.Error(ctx, "Error sending outgoing to at least one neighbour: %v", err)
+			}
+
+			success := 0
+			for _, result := range results {
+				if result == true {
+					success++
+				}
+			}
+
+			metrics.RegisterOutgoingStatus(success, len(results))
 		}
 	}()
-
 	return nil
 }
 
@@ -87,10 +77,12 @@ func sendOutgoing(ctx context.Context, target neighbourPod) error {
 	req.Header.Set(config.SourceNodeIPHeader, config.ConfigNodeIP)
 
 	requestStart := time.Now()
-	rsp := req.Send().Response()
+	rsp := req.SendVia(client).Response()
+	defer rsp.Body.Close()
+
 	requestDuration := time.Now().Sub(requestStart)
 
-	if rsp.Response == nil || rsp.StatusCode >= 400 {
+	if rsp.Error != nil || rsp.StatusCode >= 400 {
 		metrics.RegisterOutgoingRequest(target.nodeIP, false)
 		return rsp.Error
 	}

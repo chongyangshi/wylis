@@ -12,7 +12,10 @@ import (
 	"github.com/monzo/typhon"
 )
 
-var outgoingInterval time.Duration
+var (
+	outgoingInterval time.Duration
+	client           typhon.Service
+)
 
 func initTyphonClient(ctx context.Context) error {
 	var err error
@@ -49,11 +52,7 @@ func initTyphonClient(ctx context.Context) error {
 		ExpectContinueTimeout: 1 * time.Second,
 	}
 
-	outgoingClient := func(req typhon.Request) typhon.Response {
-		return typhon.HttpService(roundTripper)(req)
-	}
-
-	typhon.Client = outgoingClient
+	client = typhon.HttpService(roundTripper).Filter(typhon.ExpirationFilter).Filter(typhon.H2cFilter).Filter(typhon.ErrorFilter)
 
 	return nil
 }
