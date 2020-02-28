@@ -38,7 +38,7 @@ func initOutgoing(ctx context.Context) error {
 			g, ctx := errgroup.WithContext(ctx)
 
 			neighbours := getNeighbourPods()
-			results := make([]bool, len(neighbours)) // Should be memory-safe
+			results := make([]bool, 0, len(neighbours)) // Should be memory-safe
 
 			for i, neighbour := range neighbours {
 				neighbour := neighbour // Avoids shadowing
