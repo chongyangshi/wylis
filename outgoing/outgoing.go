@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"sync/atomic"
 	"time"
 
 	"github.com/monzo/slog"
@@ -38,14 +39,16 @@ func initOutgoing(ctx context.Context) error {
 			g, ctx := errgroup.WithContext(ctx)
 
 			neighbours := getNeighbourPods()
-			results := make([]bool, 0, len(neighbours)) // Should be memory-safe
+			total := len(neighbours)
 
-			for i, neighbour := range neighbours {
+			var successes int32
+
+			for _, neighbour := range neighbours {
 				neighbour := neighbour // Avoids shadowing
 				g.Go(func() error {
 					err := sendOutgoing(ctx, neighbour)
 					if err == nil {
-						results[i] = true
+						atomic.AddInt32(&successes, 1)
 					}
 					return err
 				})
@@ -54,14 +57,7 @@ func initOutgoing(ctx context.Context) error {
 				slog.Error(ctx, "Error sending outgoing to at least one neighbour: %v", err)
 			}
 
-			success := 0
-			for _, result := range results {
-				if result == true {
-					success++
-				}
-			}
-
-			metrics.RegisterOutgoingStatus(success, len(results))
+			metrics.RegisterOutgoingStatus(int(successes), total)
 		}
 	}()
 	return nil
