@@ -49,6 +49,7 @@ func initTyphonClient(ctx context.Context) error {
 		MaxIdleConnsPerHost:   10,
 		IdleConnTimeout:       60 * time.Second,
 		TLSHandshakeTimeout:   timeOut,
+		ResponseHeaderTimeout: timeOut,
 		ExpectContinueTimeout: 1 * time.Second,
 	}
 
