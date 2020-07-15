@@ -9,7 +9,7 @@ import (
 	"github.com/monzo/slog"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 
-	"github.com/icydoge/wylis/config"
+	"github.com/chongyangshi/wylis/config"
 )
 
 const (

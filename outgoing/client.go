@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/icydoge/wylis/config"
+	"github.com/chongyangshi/wylis/config"
 
 	"github.com/monzo/slog"
 	"github.com/monzo/typhon"

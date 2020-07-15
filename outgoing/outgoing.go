@@ -12,8 +12,8 @@ import (
 	"github.com/monzo/typhon"
 	"golang.org/x/sync/errgroup"
 
-	"github.com/icydoge/wylis/config"
-	"github.com/icydoge/wylis/metrics"
+	"github.com/chongyangshi/wylis/config"
+	"github.com/chongyangshi/wylis/metrics"
 )
 
 var targetPort int

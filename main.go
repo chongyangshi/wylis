@@ -11,10 +11,10 @@ import (
 	"github.com/monzo/slog"
 	"github.com/monzo/typhon"
 
-	"github.com/icydoge/wylis/config"
-	"github.com/icydoge/wylis/incoming"
-	"github.com/icydoge/wylis/metrics"
-	"github.com/icydoge/wylis/outgoing"
+	"github.com/chongyangshi/wylis/config"
+	"github.com/chongyangshi/wylis/incoming"
+	"github.com/chongyangshi/wylis/metrics"
+	"github.com/chongyangshi/wylis/outgoing"
 )
 
 func main() {

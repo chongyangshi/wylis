@@ -15,18 +15,18 @@ Please see my [blog post](https://blog.scy.email/running-a-low-cost-distributed-
 
 Wylis acts as a Kubernetes API client within the cluster to periodically update its knowledge of other Wylis pods running on all other nodes within the cluster. It intentionally does not use any service proxy, as all pairs of nodes should have encapsulated traffic passed through in both directions.
 
-The default [`wylis.yaml`](https://github.com/icydoge/wylis/tree/master/wylis.yaml) contains a ready to use configuration, with RBAC support, using the Wylis image from Docker Hub:
+The default [`wylis.yaml`](https://github.com/chongyangshi/wylis/tree/master/wylis.yaml) contains a ready to use configuration, with RBAC support, using the Wylis image from Docker Hub:
 
-    git clone https://github.com/icydoge/wylis.git
+    git clone https://github.com/chongyangshi/wylis.git
     cd wylis
     less wylis.yaml # Never apply any Kubernetes manifest from the internet without a careful inspection
     kubectl apply -f wylis.yaml
 
 ## Development
 
-If you are interested enough in running Wylis, I host my development builds of Wylis in my private Docker repository (`172.16.16.3:2443`), therefore it is probably easier to fork this repository and edit [`Dockerfile`](https://github.com/icydoge/wylis/tree/master/Dockerfile) to point it towards your own repository. 
+If you are interested enough in running Wylis, I host my development builds of Wylis in my private Docker repository (`172.16.16.3:2443`), therefore it is probably easier to fork this repository and edit [`Dockerfile`](https://github.com/chongyangshi/wylis/tree/master/Dockerfile) to point it towards your own repository. 
 
-You can then edit The default [`wylis.yaml`](https://github.com/icydoge/wylis/tree/master/wylis.yaml) to use your own build.
+You can then edit The default [`wylis.yaml`](https://github.com/chongyangshi/wylis/tree/master/wylis.yaml) to use your own build.
 
 ## Health Warning
 

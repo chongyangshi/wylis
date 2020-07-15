@@ -6,7 +6,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
 
-	"github.com/icydoge/wylis/config"
+	"github.com/chongyangshi/wylis/config"
 )
 
 var (

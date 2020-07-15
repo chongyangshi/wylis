@@ -14,7 +14,7 @@ import (
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 
-	wylisconfig "github.com/icydoge/wylis/config"
+	wylisconfig "github.com/chongyangshi/wylis/config"
 )
 
 type neighbourPod struct {

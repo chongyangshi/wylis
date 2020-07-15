@@ -3,8 +3,8 @@ package incoming
 import (
 	"github.com/monzo/typhon"
 
-	"github.com/icydoge/wylis/config"
-	"github.com/icydoge/wylis/metrics"
+	"github.com/chongyangshi/wylis/config"
+	"github.com/chongyangshi/wylis/metrics"
 )
 
 type incomingResponse struct{}
