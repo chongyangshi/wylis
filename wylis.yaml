@@ -26,7 +26,7 @@ spec:
             fieldRef:
               apiVersion: v1
               fieldPath: status.hostIP
-        image: icydoge/web:wylis
+        image: icydoge/web:wylis-15b6166
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 9050
