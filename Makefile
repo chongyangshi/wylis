@@ -20,10 +20,10 @@ push:
 	docker push ${REPOSITORY}:${SVC}-${COMMIT}
 
 push-public:
-        docker tag ${SVC}:latest ${PUBLIC_REPOSITIORY}:${SVC}
-        docker tag ${SVC}:latest ${PUBLIC_REPOSITIORY}:${SVC}-${COMMIT}
-        docker push ${PUBLIC_REPOSITIORY}:${SVC}
-        docker push ${PUBLIC_REPOSITIORY}:${SVC}-${COMMIT}
+		docker tag ${SVC}:latest ${PUBLIC_REPOSITIORY}:${SVC}
+		docker tag ${SVC}:latest ${PUBLIC_REPOSITIORY}:${SVC}-${COMMIT}
+		docker push ${PUBLIC_REPOSITIORY}:${SVC}
+		docker push ${PUBLIC_REPOSITIORY}:${SVC}-${COMMIT}
 
 clean:
 	docker image prune -f
